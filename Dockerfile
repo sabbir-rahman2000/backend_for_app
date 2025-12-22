@@ -42,5 +42,5 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 
 EXPOSE 80
 
-# Use the official foreground command to start Apache
-CMD ["apache2-foreground"]
+# Run PHP's built-in web server on port 80 with a router
+CMD ["php", "-S", "0.0.0.0:80", "-t", "public", "server.php"]
