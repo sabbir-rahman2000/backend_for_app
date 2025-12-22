@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip \
     && a2enmod rewrite \
-    && a2dismod mpm_event \
+    && a2dismod mpm_event mpm_worker \
     && a2enmod mpm_prefork \
     && rm -rf /var/lib/apt/lists/*
 
@@ -40,8 +40,7 @@ RUN composer run-script post-autoload-dump
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 EXPOSE 80
 
-# Start Apache in the foreground
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+# Use the official foreground command to start Apache
+CMD ["apache2-foreground"]
