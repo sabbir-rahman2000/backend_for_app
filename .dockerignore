@@ -1,0 +1,15 @@
+# Reduce build context size
+.git/
+node_modules/
+vendor/
+.env
+storage/logs/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+public/storage/
+# Tests and local artifacts
+coverage/
+phpunit.xml.cache
+.phpunit.result.cache
+tests/
