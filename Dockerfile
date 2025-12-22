@@ -46,4 +46,4 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 EXPOSE 80
 
 # Clear Laravel caches then run PHP's built-in server on port 80 with verbose error logging
-CMD ["sh", "-lc", "php artisan optimize:clear && php -d display_errors=On -d log_errors=On -d error_log=/dev/stderr -S 0.0.0.0:80 -t public server.php"]
+CMD ["sh", "-lc", "php artisan optimize:clear && php -d display_errors=On -d log_errors=On -d error_log=/dev/stderr -S 0.0.0.0:${PORT:-80} -t public server.php"]
