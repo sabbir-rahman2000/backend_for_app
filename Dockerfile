@@ -33,6 +33,9 @@ RUN composer install --prefer-dist --no-interaction --optimize-autoloader --no-s
 # Copy application source
 COPY . .
 
+# Ensure .env exists (copy from .env.production if missing)
+RUN [ -f .env ] || ( [ -f .env.production ] && cp .env.production .env ) || true
+
 # Run composer scripts after full app is copied
 RUN composer run-script post-autoload-dump
 
