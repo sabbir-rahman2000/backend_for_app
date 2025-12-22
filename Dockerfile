@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libonig-dev \
     libpq-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip mbstring \
     && a2enmod rewrite \
     && a2dismod mpm_event mpm_worker \
     && a2enmod mpm_prefork \
@@ -45,5 +45,5 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 
 EXPOSE 80
 
-# Clear Laravel caches then run PHP's built-in server on port 80
-CMD ["sh", "-lc", "php artisan optimize:clear && php -S 0.0.0.0:80 -t public server.php"]
+# Clear Laravel caches then run PHP's built-in server on port 80 with verbose error logging
+CMD ["sh", "-lc", "php artisan optimize:clear && php -d display_errors=On -d log_errors=On -d error_log=/dev/stderr -S 0.0.0.0:80 -t public server.php"]
