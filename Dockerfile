@@ -45,5 +45,5 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 
 EXPOSE 80
 
-# Run PHP's built-in web server on port 80 with a router
-CMD ["php", "-S", "0.0.0.0:80", "-t", "public", "server.php"]
+# Clear Laravel caches then run PHP's built-in server on port 80
+CMD ["sh", "-lc", "php artisan optimize:clear && php -S 0.0.0.0:80 -t public server.php"]
