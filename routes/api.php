@@ -75,3 +75,13 @@ Route::get('/users-debug', function () {
         ], 500);
     }
 });
+
+// Show current DB config (sanitized) to verify production env values
+Route::get('/db-config', function () {
+    return response()->json([
+        'host' => config('database.connections.mysql.host'),
+        'port' => config('database.connections.mysql.port'),
+        'database' => config('database.connections.mysql.database'),
+        'ssl' => env('DB_SSL', false) ? true : false,
+    ]);
+});
