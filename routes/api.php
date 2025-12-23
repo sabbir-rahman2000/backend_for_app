@@ -61,3 +61,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Public endpoint to list users (name, email, phone)
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+// Temporary debug endpoint to surface DB errors safely
+Route::get('/users-debug', function () {
+    try {
+        $rows = DB::table('users')->select('name', 'email', 'phone')->limit(5)->get();
+        return response()->json(['data' => $rows]);
+    } catch (\Throwable $e) {
+        Log::error('Users debug failed: '.$e->getMessage());
+        return response()->json([
+            'error' => 'db_error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});
