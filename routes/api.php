@@ -17,7 +17,7 @@ use App\Http\Controllers\AuthController;
 
 // Test API endpoint
 Route::get('/test', function () {
-    return response()->json(['message' => 'api are ok']);
+    return response()->json(['message' => 'api is working']);
 });
 
 // Public auth routes (no authentication required)
