@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 
@@ -45,3 +47,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Public endpoint to list users (name, email, phone)
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+// Temporary diagnostics route - shows exact error
+Route::get('/test-db', function () {
+    try {
+        $users = DB::select('SELECT name, email, phone FROM users LIMIT 5');
+        return response()->json(['data' => $users, 'status' => 'ok']);
+    } catch (\Throwable $e) {
+        Log::error('Test DB failed: '.$e->getMessage());
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ], 500);
+    }
+});
