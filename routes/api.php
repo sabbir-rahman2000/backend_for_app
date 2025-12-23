@@ -25,7 +25,8 @@ Route::get('/test', function () {
         return response()->json([
             'message' => 'api is working',
             'db' => 'connected',
-            'users' => $dbStatus
+            'users' => $dbStatus,
+            'timestamp' => now()->toDateTimeString()
         ]);
     } catch (\Throwable $e) {
         return response()->json([
@@ -36,7 +37,8 @@ Route::get('/test', function () {
                 'host' => config('database.connections.mysql.host'),
                 'port' => config('database.connections.mysql.port'),
                 'database' => config('database.connections.mysql.database'),
-            ]
+            ],
+            'timestamp' => now()->toDateTimeString()
         ]);
     }
 });
