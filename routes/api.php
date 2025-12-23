@@ -18,9 +18,27 @@ use App\Http\Controllers\UserController;
 |
 */
 
-// Test API endpoint
+// Test API endpoint with DB check
 Route::get('/test', function () {
-    return response()->json(['message' => 'api is working']);
+    try {
+        $dbStatus = DB::select('SELECT name, email, phone FROM users LIMIT 3');
+        return response()->json([
+            'message' => 'api is working',
+            'db' => 'connected',
+            'users' => $dbStatus
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'api is working',
+            'db' => 'error',
+            'error' => $e->getMessage(),
+            'db_config' => [
+                'host' => config('database.connections.mysql.host'),
+                'port' => config('database.connections.mysql.port'),
+                'database' => config('database.connections.mysql.database'),
+            ]
+        ]);
+    }
 });
 
 // Public auth routes (no authentication required)
