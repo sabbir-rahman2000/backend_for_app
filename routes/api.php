@@ -2,8 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 
@@ -21,20 +19,6 @@ use App\Http\Controllers\UserController;
 // Test API endpoint
 Route::get('/test', function () {
     return response()->json(['message' => 'api is working']);
-});
-
-// DB connectivity diagnostic
-Route::get('/db-ping', function () {
-    try {
-        DB::select('select 1 as ok');
-        return response()->json(['db' => 'ok']);
-    } catch (\Throwable $e) {
-        Log::error('DB ping failed: '.$e->getMessage());
-        return response()->json([
-            'db' => 'error',
-            'message' => $e->getMessage(),
-        ], 500);
-    }
 });
 
 // Public auth routes (no authentication required)
@@ -61,27 +45,3 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Public endpoint to list users (name, email, phone)
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
-
-// Temporary debug endpoint to surface DB errors safely
-Route::get('/users-debug', function () {
-    try {
-        $rows = DB::table('users')->select('name', 'email', 'phone')->limit(5)->get();
-        return response()->json(['data' => $rows]);
-    } catch (\Throwable $e) {
-        Log::error('Users debug failed: '.$e->getMessage());
-        return response()->json([
-            'error' => 'db_error',
-            'message' => $e->getMessage(),
-        ], 500);
-    }
-});
-
-// Show current DB config (sanitized) to verify production env values
-Route::get('/db-config', function () {
-    return response()->json([
-        'host' => config('database.connections.mysql.host'),
-        'port' => config('database.connections.mysql.port'),
-        'database' => config('database.connections.mysql.database'),
-        'ssl' => env('DB_SSL', false) ? true : false,
-    ]);
-});
