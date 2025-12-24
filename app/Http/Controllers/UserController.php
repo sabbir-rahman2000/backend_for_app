@@ -15,14 +15,7 @@ class UserController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $users = User::all()->map(function ($u) {
-                return [
-                    'id' => $u->id,
-                    'name' => $u->name,
-                    'email' => $u->email,
-                    'phone' => $u->phone ?? null,
-                ];
-            });
+            $users = User::all();
 
             return response()->json(['data' => $users]);
         } catch (\Throwable $e) {
