@@ -106,4 +106,35 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * DELETE /api/products/{id}
+     * Delete a product by ID (public testing endpoint).
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        try {
+            $product = Product::find($id);
+
+            if (!$product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found',
+                ], 404);
+            }
+
+            $product->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product deleted successfully',
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('Product delete failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete product',
+            ], 500);
+        }
+    }
 }

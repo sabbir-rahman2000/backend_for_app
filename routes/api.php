@@ -75,6 +75,7 @@ Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.de
 // Public product endpoints (testing)
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
 // Temporary diagnostics route - shows exact error
 Route::get('/test-db', function () {
@@ -97,3 +98,8 @@ Route::get('/test-db', function () {
 // fort testing api route
 // Public endpoint to list users (name, email, phone)
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+// Public product endpoints (testing)
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+
