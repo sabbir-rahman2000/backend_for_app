@@ -79,7 +79,7 @@ class AuthController extends Controller
     {
         return [
             'name' => 'required|string|min:2|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email|ends_with:@zzu.edu.cn',
+            'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
             'phone' => 'required|string|min:10|max:20',
             'student_id' => 'nullable|string|min:6|max:50',
