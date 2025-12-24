@@ -32,4 +32,34 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * DELETE /api/users/{id}
+     * Deletes a user by ID.
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        try {
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found',
+                ], 404);
+            }
+
+            $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully',
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('User delete failed: '.$e->getMessage(), ['user_id' => $id]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete user',
+            ], 500);
+        }
+    }
 }
