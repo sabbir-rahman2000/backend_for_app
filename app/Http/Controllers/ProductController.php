@@ -22,8 +22,16 @@ class ProductController extends Controller
                 'price' => 'required|numeric|min:0',
                 'description' => 'nullable|string',
                 'images' => 'nullable|array',
-                'images.*' => 'string|url',
+                'images.*' => 'file|image|max:5120', // each file up to 5MB
             ]);
+
+            $images = [];
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $file) {
+                    $path = $file->store('products', 'public');
+                    $images[] = asset('storage/' . $path);
+                }
+            }
 
             $product = Product::create([
                 'user_id' => $request->user()->id,
@@ -31,7 +39,7 @@ class ProductController extends Controller
                 'category' => $validated['category'],
                 'price' => $validated['price'],
                 'description' => $validated['description'] ?? null,
-                'images' => $validated['images'] ?? [],
+                'images' => $images,
             ]);
 
             return response()->json([
