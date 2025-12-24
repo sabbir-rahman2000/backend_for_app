@@ -19,11 +19,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|min:8|confirmed',
-            ]);
+            $validated = $request->validate($this->rules());
 
             // Generate a 6-digit verification code
             $verificationCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
@@ -32,6 +28,8 @@ class AuthController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
+                'phone' => $validated['phone'],
+                'student_id' => $validated['student_id'] ?? null,
                 'email_verification_token' => null,
                 'email_verification_code' => $verificationCode,
                 'email_verification_expires_at' => now()->addMinutes(15),
@@ -75,6 +73,17 @@ class AuthController extends Controller
                 'errors' => $e->errors()
             ], 422);
         }
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => 'required|string|min:2|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+            'phone' => 'required|string|min:10|max:20',
+            'student_id' => 'nullable|string|min:6|max:50',
+        ];
     }
 
     /**

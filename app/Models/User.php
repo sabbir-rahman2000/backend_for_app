@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'student_id',
         'email_verification_token',
         'email_verification_code',
         'email_verification_expires_at',
