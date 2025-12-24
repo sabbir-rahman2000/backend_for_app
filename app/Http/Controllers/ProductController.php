@@ -55,4 +55,55 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * GET /api/products
+     * Get all products with pagination.
+     */
+    public function index(): JsonResponse
+    {
+        try {
+            $products = Product::paginate(15);
+
+            return response()->json([
+                'success' => true,
+                'data' => $products,
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('Products index failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch products',
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/products/{id}
+     * Get a single product by ID.
+     */
+    public function show(int $id): JsonResponse
+    {
+        try {
+            $product = Product::find($id);
+
+            if (!$product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $product,
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('Product show failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch product',
+            ], 500);
+        }
+    }
 }

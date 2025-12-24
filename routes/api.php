@@ -69,11 +69,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
 });
 
-// Public endpoint to list users (name, email, phone)
-Route::get('/users', [UserController::class, 'index'])->name('users.index');
-
 // Public delete user endpoint (development/testing only)
 Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+// Public product endpoints (testing)
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
 // Temporary diagnostics route - shows exact error
 Route::get('/test-db', function () {
@@ -90,3 +91,9 @@ Route::get('/test-db', function () {
         ], 500);
     }
 });
+
+
+
+// fort testing api route
+// Public endpoint to list users (name, email, phone)
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
