@@ -65,8 +65,10 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    // Products
+    // Products (Authenticated)
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('/my-products', [ProductController::class, 'myProducts'])->name('products.my');
+    Route::get('/authenticated-products', [ProductController::class, 'indexAuthenticated'])->name('products.index-auth');
 });
 
 

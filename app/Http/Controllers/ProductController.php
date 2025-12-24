@@ -138,4 +138,52 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * GET /api/my-products
+     * Get all products for authenticated user.
+     */
+    public function myProducts(Request $request): JsonResponse
+    {
+        try {
+            $userId = $request->user()->id;
+            $products = Product::where('user_id', $userId)->paginate(15);
+
+            return response()->json([
+                'success' => true,
+                'data' => $products,
+                'message' => 'Your products fetched successfully',
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('My products fetch failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch your products',
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/authenticated-products
+     * Get all products (requires authentication).
+     */
+    public function indexAuthenticated(Request $request): JsonResponse
+    {
+        try {
+            $products = Product::paginate(15);
+
+            return response()->json([
+                'success' => true,
+                'data' => $products,
+                'message' => 'All products fetched successfully',
+                'authenticated_user_id' => $request->user()->id,
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('Authenticated products index failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch products',
+            ], 500);
+        }
+    }
 }
