@@ -106,6 +106,14 @@ class AuthController extends Controller
                 ], 401);
             }
 
+            // Block login until email is verified
+            if ($user->email_verified_at === null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Email not verified. Please verify your email to continue.'
+                ], 403);
+            }
+
             $token = $user->createToken('api_token')->plainTextToken;
 
             return response()->json([

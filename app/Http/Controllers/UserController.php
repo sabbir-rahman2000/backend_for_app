@@ -15,9 +15,21 @@ class UserController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $users = User::all();
+            // Return only safe, relevant columns (avoid password/remember_token)
+            $users = User::select([
+                'id',
+                'name',
+                'email',
+                'phone',
+                'email_verified_at',
+                'created_at',
+                'updated_at',
+            ])->get();
 
-            return response()->json(['data' => $users]);
+            return response()->json([
+                'success' => true,
+                'data' => $users,
+            ]);
         } catch (\Throwable $e) {
             Log::error('Users index failed: '.$e->getMessage());
             return response()->json([
