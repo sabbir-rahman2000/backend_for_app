@@ -17,6 +17,7 @@ class UserController extends Controller
         try {
             $users = User::all()->map(function ($u) {
                 return [
+                    'id' => $u->id,
                     'name' => $u->name,
                     'email' => $u->email,
                     'phone' => $u->phone ?? null,
