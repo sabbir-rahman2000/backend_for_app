@@ -28,8 +28,9 @@ class ProductController extends Controller
             $images = [];
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $file) {
-                    $path = $file->store('products', 'public');
-                    $images[] = asset('storage/' . $path);
+                    $filename = $file->hashName();
+                    $file->move(public_path('products'), $filename);
+                    $images[] = asset('products/' . $filename);
                 }
             }
 

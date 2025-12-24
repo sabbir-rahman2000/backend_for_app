@@ -69,8 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
 });
 
-// Public delete user endpoint (development/testing only)
-Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
 
 // Public product endpoints (testing)
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -102,4 +101,5 @@ Route::get('/users', [UserController::class, 'index'])->name('users.index');
 // Public product endpoints (testing)
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
-
+// Public delete user endpoint (development/testing only)
+Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
