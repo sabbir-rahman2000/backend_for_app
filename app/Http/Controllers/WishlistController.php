@@ -17,6 +17,39 @@ class WishlistController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
+    /**
+     * GET /api/users/{user_id}/wishlist-products
+     * Get wished products for a given user id (public).
+     */
+    public function userWishlist(int $user_id): JsonResponse
+    {
+        try {
+            $wishlist = Wishlist::with('product')
+                ->where('user_id', $user_id)
+                ->orderByDesc('created_at')
+                ->paginate(15);
+
+            // Transform to products-only while keeping pagination meta
+            $products = $wishlist->getCollection()
+                ->map(function ($item) {
+                    return $item->product;
+                })
+                ->filter();
+
+            $wishlist->setCollection($products);
+
+            return response()->json([
+                'success' => true,
+                'data' => $wishlist,
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('User wishlist products fetch failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch user wishlist products',
+            ], 500);
+        }
+    }
             $userId = $request->user()->id;
             $wishlist = Wishlist::with('product')
                 ->where('user_id', $userId)

@@ -99,6 +99,8 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/products/{product_id}/owner', [ProductController::class, 'getOwnerByProduct'])->name('products.owner-info');
 Route::get('/users/{user_id}/products', [ProductController::class, 'userProducts'])->name('users.products');
+// Public wishlist products by user id
+Route::get('/users/{user_id}/wishlist-products', [WishlistController::class, 'userWishlist'])->name('users.wishlist-products');
 Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
 // Temporary diagnostics route - shows exact error
