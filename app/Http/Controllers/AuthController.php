@@ -194,7 +194,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Send password reset email
+     * Send password reset code to email
      */
     public function forgotPassword(Request $request)
     {
@@ -212,22 +212,35 @@ class AuthController extends Controller
                 ], 404);
             }
 
-            $resetToken = Str::random(40);
+            // Generate 6-digit reset code
+            $resetCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
             $user->update([
-                'password_reset_token' => $resetToken,
+                'password_reset_code' => $resetCode,
+                'password_reset_expires_at' => now()->addMinutes(15),
             ]);
 
-            // Send password reset email (uncomment when email is configured)
-            // Mail::send('emails.reset-password', ['token' => $resetToken, 'user' => $user], function($m) use ($user) {
-            //     $m->to($user->email)->subject('Reset Your Password');
-            // });
+            // Try to send reset code email
+            $emailSent = true;
+            try {
+                Mail::to($user->email)->send(new VerifyEmailMail($user, $resetCode));
+            } catch (\Throwable $e) {
+                $emailSent = false;
+                Log::error('Failed to send password reset email', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'error' => $e->getMessage(),
+                ]);
+            }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Password reset link sent to your email',
+                'message' => $emailSent
+                    ? 'Password reset code sent to your email'
+                    : 'Failed to send password reset email, please try again',
                 'data' => [
-                    'reset_token' => $resetToken, // For testing, remove in production
+                    'email' => $user->email,
+                    'email_sent' => $emailSent,
                 ]
             ], 200);
         } catch (ValidationException $e) {
@@ -240,31 +253,39 @@ class AuthController extends Controller
     }
 
     /**
-     * Reset password with token
+     * Reset password with verification code
      */
     public function resetPassword(Request $request)
     {
         try {
             $validated = $request->validate([
-                'token' => 'required|string',
                 'email' => 'required|string|email',
-                'password' => 'required|string|min:8|confirmed',
+                'reset_code' => 'required|string',
+                'password' => 'required|string|min:6|confirmed',
             ]);
 
             $user = User::where('email', $validated['email'])
-                ->where('password_reset_token', $validated['token'])
+                ->where('password_reset_code', $validated['reset_code'])
                 ->first();
 
             if (!$user) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid reset token or email'
+                    'message' => 'Invalid reset code or email'
+                ], 400);
+            }
+
+            if ($user->password_reset_expires_at && now()->greaterThan($user->password_reset_expires_at)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Reset code expired'
                 ], 400);
             }
 
             $user->update([
                 'password' => Hash::make($validated['password']),
-                'password_reset_token' => null,
+                'password_reset_code' => null,
+                'password_reset_expires_at' => null,
             ]);
 
             return response()->json([
