@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Artisan;
+use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
@@ -169,6 +170,34 @@ Route::delete('/cleanup-database', function () {
 // Ping to verify deployment/routing
 Route::get('/run-migrations/ping', function () {
     return response()->json(['success' => true, 'message' => 'route-ok']);
+});
+
+// Temporary debug: fetch reset code for a user (protected by X-Debug-Secret)
+Route::get('/debug/reset-code', function (Request $request) {
+    $secret = env('DEBUG_SECRET');
+    if (!$secret || $request->header('X-Debug-Secret') !== $secret) {
+        return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+    }
+
+    $email = $request->query('email');
+    if (!$email) {
+        return response()->json(['success' => false, 'message' => 'Email required'], 422);
+    }
+
+    $user = User::where('email', $email)->first();
+    if (!$user) {
+        return response()->json(['success' => false, 'message' => 'User not found'], 404);
+    }
+
+    return response()->json([
+        'success' => true,
+        'data' => [
+            'email' => $user->email,
+            'password_reset_code' => $user->password_reset_code,
+            'password_reset_expires_at' => $user->password_reset_expires_at,
+            'now' => now()->toDateTimeString(),
+        ],
+    ]);
 });
 
 // Temporary: run migrations via HTTP (protect with secret token)
