@@ -172,7 +172,7 @@ Route::get('/run-migrations/ping', function () {
 });
 
 // Temporary: run migrations via HTTP (protect with secret token)
-Route::any('/run-migrations', function (Request $request) {
+$runMigrationsHandler = function (Request $request) {
     $secret = env('MIGRATE_SECRET');
     if (!$secret || $request->header('X-Migrate-Secret') !== $secret) {
         return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
@@ -192,4 +192,7 @@ Route::any('/run-migrations', function (Request $request) {
             'error' => $e->getMessage(),
         ], 500);
     }
-});
+};
+
+Route::post('/run-migrations', $runMigrationsHandler);
+Route::get('/run-migrations', $runMigrationsHandler);
