@@ -186,4 +186,53 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * GET /api/products/{id}/user
+     * Get the owner's info for a product (authenticated required).
+     */
+    public function productOwner(int $id, Request $request): JsonResponse
+    {
+        try {
+            $product = Product::find($id);
+
+            if (!$product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found',
+                ], 404);
+            }
+
+            $owner = User::select([
+                'id',
+                'name',
+                'email',
+                'phone',
+                'email_verified_at',
+                'created_at',
+            ])->find($product->user_id);
+
+            if (!$owner) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Owner not found',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'product_id' => $product->id,
+                    'product_title' => $product->title,
+                    'owner' => $owner,
+                ],
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('Product owner fetch failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch product owner',
+            ], 500);
+        }
+    }
 }

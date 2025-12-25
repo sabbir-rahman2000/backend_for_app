@@ -40,6 +40,43 @@ class UserController extends Controller
     }
 
     /**
+     * GET /api/users/{id}
+     * Get a specific user's public info (authenticated required).
+     */
+    public function show(int $id): JsonResponse
+    {
+        try {
+            $user = User::select([
+                'id',
+                'name',
+                'email',
+                'phone',
+                'email_verified_at',
+                'created_at',
+                'updated_at',
+            ])->find($id);
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $user,
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('User show failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch user',
+            ], 500);
+        }
+    }
+
+    /**
      * DELETE /api/users/{id}
      * Deletes a user by ID.
      */
