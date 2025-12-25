@@ -95,9 +95,20 @@ class ProductController extends Controller
                 ], 404);
             }
 
+            // Get owner info
+            $owner = User::select([
+                'id',
+                'name',
+                'email',
+                'phone',
+            ])->find($product->user_id);
+
             return response()->json([
                 'success' => true,
-                'data' => $product,
+                'data' => [
+                    'product' => $product,
+                    'owner' => $owner,
+                ],
             ], 200);
         } catch (\Throwable $e) {
             Log::error('Product show failed: '.$e->getMessage());
