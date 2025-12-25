@@ -253,4 +253,34 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * GET /api/users/{user_id}/products
+     * Get all products for a specific user.
+     */
+    public function userProducts(int $user_id): JsonResponse
+    {
+        try {
+            $products = Product::where('user_id', $user_id)->paginate(15);
+
+            if ($products->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'No products found for this user',
+                    'data' => $products,
+                ], 200);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $products,
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('User products fetch failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch user products',
+            ], 500);
+        }
+    }
 }

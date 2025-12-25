@@ -74,6 +74,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Messages (Authenticated)
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+
+    // Users (Authenticated) - fetch user info by id (for chat header)
+    Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
 });
 
 
@@ -81,6 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Public product endpoints (testing)
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/users/{user_id}/products', [ProductController::class, 'userProducts'])->name('users.products');
 Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
 // Temporary diagnostics route - shows exact error
