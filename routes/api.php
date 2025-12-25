@@ -84,6 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Public product endpoints (testing)
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products/{product_id}/owner', [ProductController::class, 'getOwnerByProduct'])->name('products.owner-info');
 Route::get('/users/{user_id}/products', [ProductController::class, 'userProducts'])->name('users.products');
 Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
