@@ -343,6 +343,72 @@ class AuthController extends Controller
     }
 
     /**
+     * Resend verification code to email
+     */
+    public function resendCode(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'email' => 'required|string|email',
+            ]);
+
+            $user = User::where('email', $validated['email'])->first();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found'
+                ], 404);
+            }
+
+            if ($user->email_verified_at !== null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Email already verified'
+                ], 400);
+            }
+
+            // Generate new 6-digit verification code
+            $verificationCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+            $user->update([
+                'email_verification_code' => $verificationCode,
+                'email_verification_expires_at' => now()->addMinutes(15),
+            ]);
+
+            // Try to send verification code email
+            $emailSent = true;
+            try {
+                Mail::to($user->email)->send(new VerifyEmailMail($user, $verificationCode));
+            } catch (\Throwable $e) {
+                $emailSent = false;
+                Log::error('Failed to resend verification email', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $emailSent
+                    ? 'Verification code sent to your email'
+                    : 'Failed to send verification email, please try again',
+                'data' => [
+                    'email' => $user->email,
+                    'email_sent' => $emailSent,
+                ]
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        }
+    }
+
+    /**
      * Get current user
      */
     public function me(Request $request)

@@ -52,6 +52,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
     Route::post('/verify-email', [AuthController::class, 'verifyEmail'])->name('auth.verify-email');
+    Route::post('/resend-code', [AuthController::class, 'resendCode'])->name('auth.resend-code');
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('auth.forgot-password');
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('auth.reset-password');
 });
