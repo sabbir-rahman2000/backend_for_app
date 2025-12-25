@@ -29,7 +29,7 @@ class AuthController extends Controller
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
                 'phone' => $validated['phone'],
-                'student_id' => $validated['student_id'] ?? null,
+                'student_id' => $validated['student_id'],
                 'email_verification_token' => null,
                 'email_verification_code' => $verificationCode,
                 'email_verification_expires_at' => now()->addMinutes(15),
@@ -82,7 +82,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
             'phone' => 'required|string|min:10|max:20',
-            'student_id' => 'nullable|string|min:6|max:50',
+            'student_id' => 'required|string|min:6|max:50',
         ];
     }
 
