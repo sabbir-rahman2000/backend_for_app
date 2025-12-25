@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\SellController;
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +83,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/wishlist', [WishlistController::class, 'store'])->name('wishlist.store');
     Route::delete('/wishlist/{product_id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
     Route::get('/wishlist/check/{product_id}', [WishlistController::class, 'check'])->name('wishlist.check');
+
+    // Sells (Authenticated)
+    Route::post('/sells', [SellController::class, 'store'])->name('sells.store');
+    Route::get('/sells', [SellController::class, 'index'])->name('sells.index');
 
     // Users (Authenticated) - fetch user info by id (for chat header)
     Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
