@@ -376,19 +376,14 @@ class ProductController extends Controller
         try {
             $userId = $request->user()->id;
 
-            $unsoldCount = Product::where('user_id', $userId)
-                ->where('sold', 0)
-                ->count();
-
-            $soldCount = Product::where('user_id', $userId)
-                ->where('sold', 1)
-                ->count();
+            $totalCount = Product::where('user_id', $userId)->count();
+            $soldCount = Product::where('user_id', $userId)->where('sold', 1)->count();
 
             return response()->json([
                 'success' => true,
                 'data' => [
                     'user_id' => $userId,
-                    'unsold_count' => $unsoldCount,
+                    'total_count' => $totalCount,
                     'sold_count' => $soldCount,
                 ],
             ], 200);
