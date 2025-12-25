@@ -32,7 +32,7 @@ class AuthController extends Controller
                 'student_id' => $validated['student_id'],
                 'email_verification_token' => null,
                 'email_verification_code' => $verificationCode,
-                'email_verification_expires_at' => now()->addMinutes(15),
+                'email_verification_expires_at' => now()->addMinutes(2),
             ]);
 
             // Try to send verification code email without failing registration
@@ -220,7 +220,7 @@ class AuthController extends Controller
 
             $user->update([
                 'password_reset_code' => $resetCode,
-                'password_reset_expires_at' => now()->addMinutes(15),
+                'password_reset_expires_at' => now()->addMinutes(2),
             ]);
 
             // Try to send reset code email
@@ -400,7 +400,7 @@ class AuthController extends Controller
 
             $user->update([
                 'email_verification_code' => $verificationCode,
-                'email_verification_expires_at' => now()->addMinutes(15),
+                'email_verification_expires_at' => now()->addMinutes(2),
             ]);
 
             // Try to send verification code email

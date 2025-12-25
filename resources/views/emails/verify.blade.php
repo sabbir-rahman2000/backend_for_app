@@ -178,7 +178,7 @@
                     @endif
                 </div>
                 <div class="code">{{ $code }}</div>
-                <div class="expiry">⏰ Expires in 15 minutes</div>
+                <div class="expiry">⏰ Expires in 2 minutes</div>
             </div>
 
             @if($type === 'reset')
