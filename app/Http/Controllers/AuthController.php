@@ -443,6 +443,7 @@ class AuthController extends Controller
                 'user' => [
                     'id' => $request->user()->id,
                     'name' => $request->user()->name,
+                    'student_id' => $request->user()->student_id,
                     'email' => $request->user()->email,
                     'is_verified' => $request->user()->email_verified_at !== null,
                 ]
