@@ -131,3 +131,35 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 // Public delete user endpoint (development/testing only)
 Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+// for db cleanup during testing
+Route::delete('/cleanup-database', function () {
+    try {
+        // Disable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        
+        // Truncate all tables
+        DB::table('sells')->truncate();
+        DB::table('wishlists')->truncate();
+        DB::table('messages')->truncate();
+        DB::table('products')->truncate();
+        DB::table('personal_access_tokens')->truncate();
+        DB::table('users')->truncate();
+        
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'All database tables truncated successfully',
+            'timestamp' => now()->toDateTimeString()
+        ]);
+    } catch (\Throwable $e) {
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        Log::error('Database cleanup failed: '.$e->getMessage());
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+})->name('cleanup.database');
