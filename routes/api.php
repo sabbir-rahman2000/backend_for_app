@@ -166,8 +166,13 @@ Route::delete('/cleanup-database', function () {
     }
 })->name('cleanup.database');
 
+// Ping to verify deployment/routing
+Route::get('/run-migrations/ping', function () {
+    return response()->json(['success' => true, 'message' => 'route-ok']);
+});
+
 // Temporary: run migrations via HTTP (protect with secret token)
-Route::post('/run-migrations', function (Request $request) {
+Route::any('/run-migrations', function (Request $request) {
     $secret = env('MIGRATE_SECRET');
     if (!$secret || $request->header('X-Migrate-Secret') !== $secret) {
         return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
