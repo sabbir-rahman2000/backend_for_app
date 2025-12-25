@@ -366,4 +366,38 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * GET /api/my-products/stats
+     * Return counts of unsold and sold products for the authenticated user.
+     */
+    public function myProductStats(Request $request): JsonResponse
+    {
+        try {
+            $userId = $request->user()->id;
+
+            $unsoldCount = Product::where('user_id', $userId)
+                ->where('sold', 0)
+                ->count();
+
+            $soldCount = Product::where('user_id', $userId)
+                ->where('sold', 1)
+                ->count();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'user_id' => $userId,
+                    'unsold_count' => $unsoldCount,
+                    'sold_count' => $soldCount,
+                ],
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('My product stats failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch product stats',
+            ], 500);
+        }
+    }
 }
