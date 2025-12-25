@@ -60,6 +60,7 @@ class AuthController extends Controller
                         'id' => $user->id,
                         'name' => $user->name,
                         'email' => $user->email,
+                        'student_id' => $user->student_id,
                         'is_verified' => false,
                     ],
                     'token' => $token,
@@ -116,6 +117,7 @@ class AuthController extends Controller
                         'id' => $user->id,
                         'name' => $user->name,
                         'email' => $user->email,
+                        'student_id' => $user->student_id,
                         'is_verified' => $user->email_verified_at !== null,
                     ],
                     'token' => $token,
@@ -179,6 +181,7 @@ class AuthController extends Controller
                     'user' => [
                         'id' => $user->id,
                         'name' => $user->name,
+                        'student_id' => $user->student_id,
                         'email' => $user->email,
                         'is_verified' => true,
                     ]
