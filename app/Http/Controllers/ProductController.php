@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
@@ -27,9 +29,14 @@ class ProductController extends Controller
 
             $images = [];
             if ($request->hasFile('images')) {
+                $uploadPath = public_path('products');
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0755, true);
+                }
+
                 foreach ($request->file('images') as $file) {
                     $filename = $file->hashName();
-                    $file->move(public_path('products'), $filename);
+                    $file->move($uploadPath, $filename);
                     $images[] = asset('products/' . $filename);
                 }
             }
