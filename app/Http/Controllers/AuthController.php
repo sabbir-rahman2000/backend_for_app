@@ -138,11 +138,11 @@ class AuthController extends Controller
         try {
             $validated = $request->validate([
                 'email' => 'required|string|email',
-                'code' => 'required|string',
+                'verification_code' => 'required|string',
             ]);
 
             $user = User::where('email', $validated['email'])
-                ->where('email_verification_code', $validated['code'])
+                ->where('email_verification_code', $validated['verification_code'])
                 ->first();
 
             if (!$user) {
