@@ -17,9 +17,27 @@ class WishlistController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
+            $userId = $request->user()->id;
+            $wishlist = Wishlist::with('product')
+                ->where('user_id', $userId)
+                ->paginate(15);
+
+            return response()->json([
+                'success' => true,
+                'data' => $wishlist,
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('Wishlist fetch failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch wishlist',
+            ], 500);
+        }
+    }
+
     /**
      * GET /api/users/{user_id}/wishlist-products
-     * Get wished products for a given user id (public).
+     * Get wished products for a given user id (authorized).
      */
     public function userWishlist(int $user_id): JsonResponse
     {
@@ -47,23 +65,6 @@ class WishlistController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch user wishlist products',
-            ], 500);
-        }
-    }
-            $userId = $request->user()->id;
-            $wishlist = Wishlist::with('product')
-                ->where('user_id', $userId)
-                ->paginate(15);
-
-            return response()->json([
-                'success' => true,
-                'data' => $wishlist,
-            ], 200);
-        } catch (\Throwable $e) {
-            Log::error('Wishlist fetch failed: '.$e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to fetch wishlist',
             ], 500);
         }
     }
