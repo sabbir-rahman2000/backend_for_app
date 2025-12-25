@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
@@ -164,3 +165,26 @@ Route::delete('/cleanup-database', function () {
         ], 500);
     }
 })->name('cleanup.database');
+
+// Temporary: run migrations via HTTP (protect with secret token)
+Route::post('/run-migrations', function (Request $request) {
+    $secret = env('MIGRATE_SECRET');
+    if (!$secret || $request->header('X-Migrate-Secret') !== $secret) {
+        return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+    }
+
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Migrations executed',
+            'output' => Artisan::output(),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Migration failed',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+});
