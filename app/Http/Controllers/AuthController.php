@@ -38,7 +38,7 @@ class AuthController extends Controller
             // Try to send verification code email without failing registration
             $emailSent = true;
             try {
-                Mail::to($user->email)->send(new VerifyEmailMail($user, $verificationCode));
+                Mail::to($user->email)->send(new VerifyEmailMail($user, $verificationCode, 'verification'));
             } catch (\Throwable $e) {
                 $emailSent = false;
                 Log::error('Failed to send verification email', [
@@ -226,7 +226,7 @@ class AuthController extends Controller
             // Try to send reset code email
             $emailSent = true;
             try {
-                Mail::to($user->email)->send(new VerifyEmailMail($user, $resetCode));
+                Mail::to($user->email)->send(new VerifyEmailMail($user, $resetCode, 'reset'));
             } catch (\Throwable $e) {
                 $emailSent = false;
                 Log::error('Failed to send password reset email', [
@@ -406,7 +406,7 @@ class AuthController extends Controller
             // Try to send verification code email
             $emailSent = true;
             try {
-                Mail::to($user->email)->send(new VerifyEmailMail($user, $verificationCode));
+                Mail::to($user->email)->send(new VerifyEmailMail($user, $verificationCode, 'verification'));
             } catch (\Throwable $e) {
                 $emailSent = false;
                 Log::error('Failed to resend verification email', [

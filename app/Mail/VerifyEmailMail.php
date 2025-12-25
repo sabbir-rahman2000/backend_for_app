@@ -13,14 +13,16 @@ class VerifyEmailMail extends Mailable
 
     public User $user;
     public string $code;
+    public string $type; // 'verification' or 'reset'
 
     /**
      * Create a new message instance.
      */
-    public function __construct(User $user, string $code)
+    public function __construct(User $user, string $code, string $type = 'verification')
     {
         $this->user = $user;
         $this->code = $code;
+        $this->type = $type;
     }
 
     /**
@@ -28,11 +30,16 @@ class VerifyEmailMail extends Mailable
      */
     public function build(): self
     {
-        return $this->subject('Your Verification Code')
+        $subject = $this->type === 'reset' 
+            ? 'Password Reset Code - Zhengzhou University'
+            : 'Email Verification Code - Zhengzhou University';
+
+        return $this->subject($subject)
             ->view('emails.verify')
             ->with([
                 'user' => $this->user,
                 'code' => $this->code,
+                'type' => $this->type,
             ]);
     }
 }
