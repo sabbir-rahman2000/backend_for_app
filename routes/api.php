@@ -88,6 +88,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sells', [SellController::class, 'store'])->name('sells.store');
     Route::get('/sells', [SellController::class, 'index'])->name('sells.index');
 
+    // Wishlist products by user id (Authenticated)
+    Route::get('/users/{user_id}/wishlist-products', [WishlistController::class, 'userWishlist'])->name('users.wishlist-products');
+
     // Users (Authenticated) - fetch user info by id (for chat header)
     Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
 });
@@ -99,8 +102,6 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/products/{product_id}/owner', [ProductController::class, 'getOwnerByProduct'])->name('products.owner-info');
 Route::get('/users/{user_id}/products', [ProductController::class, 'userProducts'])->name('users.products');
-// Public wishlist products by user id
-Route::get('/users/{user_id}/wishlist-products', [WishlistController::class, 'userWishlist'])->name('users.wishlist-products');
 Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
 // Temporary diagnostics route - shows exact error
