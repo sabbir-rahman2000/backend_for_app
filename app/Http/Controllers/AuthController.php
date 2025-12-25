@@ -241,6 +241,9 @@ class AuthController extends Controller
                 'data' => [
                     'email' => $user->email,
                     'email_sent' => $emailSent,
+                    // For testing only: return reset code and expiry so mobile can verify; remove in production
+                    'reset_code' => $resetCode,
+                    'expires_at' => $user->password_reset_expires_at,
                 ]
             ], 200);
         } catch (ValidationException $e) {
