@@ -127,6 +127,45 @@ class ProductController extends Controller
     }
 
     /**
+     * DELETE /api/products/{id}/delete
+     * Delete a product (authenticated - only owner can delete).
+     */
+    public function deleteOwn(int $id, Request $request): JsonResponse
+    {
+        try {
+            $product = Product::find($id);
+
+            if (!$product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found',
+                ], 404);
+            }
+
+            // Check if authenticated user is the owner
+            if ($product->user_id !== $request->user()->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. You can only delete your own products',
+                ], 403);
+            }
+
+            $product->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Product deleted successfully',
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('Product delete failed: '.$e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete product',
+            ], 500);
+        }
+    }
+
+    /**
      * DELETE /api/products/{id}
      * Delete a product by ID (public testing endpoint).
      */

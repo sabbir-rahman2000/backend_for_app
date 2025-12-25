@@ -71,6 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::get('/my-products', [ProductController::class, 'myProducts'])->name('products.my');
     Route::get('/authenticated-products', [ProductController::class, 'indexAuthenticated'])->name('products.index-auth');
+    Route::delete('/products/{id}/delete', [ProductController::class, 'deleteOwn'])->name('products.delete-own');
 
     // Messages (Authenticated)
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
